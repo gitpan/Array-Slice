@@ -1,0 +1,50 @@
+NAME
+    Array::Slice - context-dependent array iterator
+
+SYNOPSIS
+    Iterate over an array assigning three items per cycle
+
+        while ( my ( $x, $y, $z) = slice @arr) { ... }
+
+    or,
+
+        while ( my ( undef, undef, $z) = slice @arr) { ... }
+
+    or even
+
+        while ( @a = slice @arr, 3) { ... }
+
+DESCRIPTION
+    I've always wanted the power of "foreach(@arr)" applied to more than one
+    array with more than one slice. Perl6 does it, Perl5 with source
+    filtering does it, close but no cigar. This module is an attempt of
+    slicing a single array with least obtrusive syntax I can think of.
+
+    The module works by attaching an integer counter to each scalar using
+    perl magic API.
+
+    slice @array, [ $howmany ]
+        Iterates over an array, returning $howmany items perl call. If
+        called without $howmany, deduces the number depending on the calling
+        context.
+
+    reset @array, [ $whereto ]
+        Resets the array iterator to $whereto or 0. $whereto can be
+        negavtive, as in native array indexing.
+
+BUGS
+    Array items are copied, not aliased as in "for"/"foreach".
+
+    Doesn't work with lists. This is one big TODO.
+
+SEE ALSO
+    Array::Each::Override, Array::Each, Want, List::MoreUtils, "The for
+    statement" in Perl6::Bible.
+
+THANKS
+    Aaron Crane for implementation of Array::Each::Override, which code was
+    used as base for this module.
+
+AUTHOR
+    Dmitry Karasik, <dmitry@karasik.eu.org>.
+
