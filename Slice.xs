@@ -1,9 +1,11 @@
-/* $Id: Slice.xs,v 1.4 2007/04/12 08:15:18 dk Exp $ */
+/* $Id: Slice.xs,v 1.5 2007/04/12 11:34:10 dk Exp $ */
 #define PERL_NO_GET_CONTEXT
 
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+
+/* hacked copy of Array::Each::Override.xs by Aaron Crane */
 
 static char private_data = '\0';
 
