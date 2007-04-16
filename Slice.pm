@@ -1,11 +1,11 @@
-# $Id: Slice.pm,v 1.10 2007/04/12 11:37:48 dk Exp $
+# $Id: Slice.pm,v 1.11 2007/04/16 07:33:29 dk Exp $
 package Array::Slice;
 
 use strict;
 use warnings;
 use Want qw(howmany);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 use base qw(DynaLoader Exporter);
 
 our @EXPORT_OK   = qw(reset slice);

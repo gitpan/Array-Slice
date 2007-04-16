@@ -1,4 +1,4 @@
-/* $Id: Slice.xs,v 1.5 2007/04/12 11:34:10 dk Exp $ */
+/* $Id: Slice.xs,v 1.6 2007/04/16 07:30:37 dk Exp $ */
 #define PERL_NO_GET_CONTEXT
 
 #include "EXTERN.h"
@@ -10,7 +10,7 @@
 static char private_data = '\0';
 
 static MAGIC *
-get_existing_magic( SV *sv)
+get_existing_magic( pTHX_ SV *sv)
 {
 	MAGIC *mg;
 
@@ -22,11 +22,11 @@ get_existing_magic( SV *sv)
 }
 
 static MAGIC *
-get_magic( SV *sv)
+get_magic( pTHX_ SV *sv)
 {
 	MAGIC *mg;
 
-	mg = get_existing_magic( sv);
+	mg = get_existing_magic( aTHX_ sv);
 	if (mg)
 		return mg;
 
@@ -35,12 +35,12 @@ get_magic( SV *sv)
 }
 
 static int
-advance_iterator( SV *sv, int howmany)
+advance_iterator( pTHX_ SV *sv, int howmany)
 {
 	MAGIC *mg;
 	int i;
 
-	mg = get_magic( sv);
+	mg = get_magic( aTHX_ sv);
 	i = SvIVX( mg-> mg_obj);
 	sv_setiv( mg-> mg_obj, i + howmany);
 
@@ -48,12 +48,12 @@ advance_iterator( SV *sv, int howmany)
 }
 
 static int
-set_iterator( SV *sv, int val)
+set_iterator( pTHX_ SV *sv, int val)
 {
 	MAGIC *mg;
 	int i;
 
-	mg = get_magic( sv);
+	mg = get_magic( aTHX_ sv);
 	i = SvIVX( mg-> mg_obj);
 	sv_setiv( mg-> mg_obj, val);
 
@@ -61,11 +61,11 @@ set_iterator( SV *sv, int val)
 }
 
 static void
-clear_iterator( SV *sv)
+clear_iterator( pTHX_ SV *sv)
 {
 	MAGIC *mg;
 
-	if ((mg = get_existing_magic( sv)))
+	if ((mg = get_existing_magic( aTHX_ sv)))
 		sv_setiv(mg-> mg_obj, 0);
 }
 
@@ -91,10 +91,10 @@ PPCODE:
 	if (SvTYPE(sv) != SVt_PVAV)
 		croak("Argument to Array::Slice::slice must be an array reference");
 	av = (AV *) sv;
-	i = advance_iterator( sv, howmany);
+	i = advance_iterator( aTHX_ sv, howmany);
 	len = av_len( av);
 	if (i > len) {
-		clear_iterator( sv);
+		clear_iterator( aTHX_ sv);
 		XSRETURN_EMPTY;
 	}
 	if (GIMME_V != G_VOID) {
@@ -120,7 +120,7 @@ PPCODE:
 	if (SvTYPE(sv) != SVt_PVAV)
 		croak("Argument to Array::Slice::reset must be an array reference");
 	if ( items == 1 || SvTYPE( ST(1)) == SVt_NULL) {
-		clear_iterator( sv);
+		clear_iterator( aTHX_ sv);
 	} else {
 		int i   = SvIV( ST( 1));
 		AV *av  = (AV *) sv;
@@ -135,6 +135,6 @@ PPCODE:
 			warn("Array::Slice::reset past end of array");
 			i = len;
 		}
-		set_iterator( sv, i);
+		set_iterator( aTHX_ sv, i);
 	}
 	XSRETURN_EMPTY;
